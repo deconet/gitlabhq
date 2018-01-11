@@ -46,6 +46,16 @@ module Gitlab
         access_token.user || raise(UnauthorizedError)
       end
 
+      def find_user_from_deconet_token
+        token = current_request.env['HTTP_X_DECONET_TOKEN']
+        return unless token
+
+        rsa_public = OpenSSL::PKey::RSA.new(ENV['DECONET_JWT_PUBLIC_KEY'])
+        decoded_token = JWT.decode token, rsa_public, true, { algorithm: 'RS256' }
+        payload = decoded_token[0]
+        User.find_by(email: payload['user']['email']) || raise(UnauthorizedError)
+      end
+
       def validate_access_token!(scopes: [])
         return unless access_token
 
