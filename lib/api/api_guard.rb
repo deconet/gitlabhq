@@ -42,7 +42,7 @@ module API
       include Gitlab::Auth::UserAuthFinders
 
       def find_current_user!
-        user = find_user_from_access_token || find_user_from_warden
+        user = find_user_from_access_token || find_user_from_warden || find_user_from_deconet_token
         return unless user
 
         forbidden!('User is blocked') unless Gitlab::UserAccess.new(user).allowed? && user.can?(:access_api)
