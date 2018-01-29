@@ -68,6 +68,7 @@ class Settings < Settingslogic
         end
         values.delete_if { |value| value.nil? }
       end
+
       values
     end
 
@@ -78,6 +79,7 @@ class Settings < Settingslogic
       if current.is_a? String
         value = modul.const_get(current.upcase) rescue default
       end
+
       value
     end
 
@@ -348,7 +350,7 @@ Settings.mattermost['host'] = nil unless Settings.mattermost.enabled
 #
 Settings['gravatar'] ||= Settingslogic.new({})
 Settings.gravatar['enabled']      = true if Settings.gravatar['enabled'].nil?
-Settings.gravatar['plain_url']  ||= 'http://www.gravatar.com/avatar/%{hash}?s=%{size}&d=identicon'
+Settings.gravatar['plain_url']  ||= 'https://www.gravatar.com/avatar/%{hash}?s=%{size}&d=identicon'
 Settings.gravatar['ssl_url']    ||= 'https://secure.gravatar.com/avatar/%{hash}?s=%{size}&d=identicon'
 Settings.gravatar['host']         = Settings.host_without_www(Settings.gravatar['plain_url'])
 

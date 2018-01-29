@@ -1,3 +1,5 @@
+# Gitaly migration: https://gitlab.com/gitlab-org/gitaly/issues/954
+#
 namespace :gitlab do
   namespace :cleanup do
     HASHED_REPOSITORY_NAME = '@hashed'.freeze
@@ -84,6 +86,7 @@ namespace :gitlab do
         next unless user.ldap_user?
 
         print "#{user.name} (#{user.ldap_identity.extern_uid}) ..."
+
         if Gitlab::LDAP::Access.allowed?(user)
           puts " [OK]".color(:green)
         else
