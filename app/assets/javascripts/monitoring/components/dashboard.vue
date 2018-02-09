@@ -27,6 +27,7 @@
         hasMetrics: convertPermissionToBoolean(metricsData.hasMetrics),
         documentationPath: metricsData.documentationPath,
         settingsPath: metricsData.settingsPath,
+        clustersPath: metricsData.clustersPath,
         tagsPath: metricsData.tagsPath,
         projectPath: metricsData.projectPath,
         metricsEndpoint: metricsData.additionalMetrics,
@@ -76,7 +77,13 @@
             .then(data => this.store.storeDeploymentData(data))
             .catch(() => new Flash('Error getting deployment information.')),
         ])
-          .then(() => { this.showEmptyState = false; })
+          .then(() => {
+            if (this.store.groups.length < 1) {
+              this.state = 'noData';
+              return;
+            }
+            this.showEmptyState = false;
+          })
           .catch(() => { this.state = 'unableToConnect'; });
       },
 
@@ -126,6 +133,7 @@
     :selected-state="state"
     :documentation-path="documentationPath"
     :settings-path="settingsPath"
+    :clusters-path="clustersPath"
     :empty-getting-started-svg-path="emptyGettingStartedSvgPath"
     :empty-loading-svg-path="emptyLoadingSvgPath"
     :empty-unable-to-connect-svg-path="emptyUnableToConnectSvgPath"
