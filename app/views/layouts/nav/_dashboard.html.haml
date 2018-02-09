@@ -21,6 +21,9 @@
   = nav_link(controller: 'dashboard/snippets', html_options: { class: "visible-lg" }) do
     = link_to dashboard_snippets_path, class: 'dashboard-shortcuts-snippets', title: 'Snippets' do
       Snippets
+  %li.visible-lg
+    =link_to 'Deconet Module Manager', 'https://app.deco.network/my_modules', class: 'dashboard-shortcuts-activity', title: 'Deconet Module Manager'
+
 
   %li.header-more.dropdown.hidden-lg
     %a{ href: "#", data: { toggle: "dropdown" } }
