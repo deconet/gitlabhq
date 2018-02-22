@@ -250,7 +250,7 @@ class Project < ActiveRecord::Base
     uniqueness: { scope: :namespace_id }
 
   validates :namespace, presence: true
-  validates :name, uniqueness: { scope: :namespace_id }
+  validates :name, uniqueness: { scope: :namespace_id }, length: { maximum: 32 }
   validates :import_url, addressable_url: true, if: :external_import?
   validates :import_url, importable_url: true, if: [:external_import?, :import_url_changed?]
   validates :star_count, numericality: { greater_than_or_equal_to: 0 }
