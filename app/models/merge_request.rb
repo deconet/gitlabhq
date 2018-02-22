@@ -158,10 +158,12 @@ class MergeRequest < ActiveRecord::Base
   end
 
   def rebase_in_progress?
-    # The source project can be deleted
-    return false unless source_project
+    strong_memoize(:rebase_in_progress) do
+      # The source project can be deleted
+      next false unless source_project
 
-    source_project.repository.rebase_in_progress?(id)
+      source_project.repository.rebase_in_progress?(id)
+    end
   end
 
   # Use this method whenever you need to make sure the head_pipeline is synced with the
@@ -618,12 +620,12 @@ class MergeRequest < ActiveRecord::Base
     can_be_merged? && !should_be_rebased?
   end
 
-  def mergeable_state?(skip_ci_check: false)
+  def mergeable_state?(skip_ci_check: false, skip_discussions_check: false)
     return false unless open?
     return false if work_in_progress?
     return false if broken?
     return false unless skip_ci_check || mergeable_ci_state?
-    return false unless mergeable_discussions_state?
+    return false unless skip_discussions_check || mergeable_discussions_state?
 
     true
   end

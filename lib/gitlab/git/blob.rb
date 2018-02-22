@@ -53,11 +53,7 @@ module Gitlab
         def batch(repository, blob_references, blob_size_limit: MAX_DATA_DISPLAY_SIZE)
           Gitlab::GitalyClient.migrate(:list_blobs_by_sha_path) do |is_enabled|
             if is_enabled
-              Gitlab::GitalyClient.allow_n_plus_1_calls do
-                blob_references.map do |sha, path|
-                  find_by_gitaly(repository, sha, path, limit: blob_size_limit)
-                end
-              end
+              repository.gitaly_blob_client.get_blobs(blob_references, blob_size_limit).to_a
             else
               blob_references.map do |sha, path|
                 find_by_rugged(repository, sha, path, limit: blob_size_limit)
@@ -107,7 +103,7 @@ module Gitlab
         def find_entry_by_path(repository, root_id, path)
           root_tree = repository.lookup(root_id)
           # Strip leading slashes
-          path[/^\/*/] = ''
+          path[%r{^/*}] = ''
           path_arr = path.split('/')
 
           entry = root_tree.find do |entry|
@@ -140,7 +136,7 @@ module Gitlab
         def find_by_gitaly(repository, sha, path, limit: MAX_DATA_DISPLAY_SIZE)
           return unless path
 
-          path = path.sub(/\A\/*/, '')
+          path = path.sub(%r{\A/*}, '')
           path = '/' if path.empty?
           name = File.basename(path)
 
